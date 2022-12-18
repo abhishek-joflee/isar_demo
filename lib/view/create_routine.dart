@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:isar_demo/models/category.dart';
+import 'package:isar_demo/shared/isar_singleton.dart';
 
 enum Days {
   monday,
@@ -88,9 +90,7 @@ class _CreateRoutinePageState extends State<CreateRoutinePage> {
                         ),
                       );
                       if (newCat != null) {
-                        setState(() {
-                          categories.add(newCat);
-                        });
+                        _addCategory(newCat);
                       }
                     },
                     icon: const Icon(
@@ -140,7 +140,11 @@ class _CreateRoutinePageState extends State<CreateRoutinePage> {
                     : null,
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  if (titleController.text.isNotEmpty) {
+                    _addRoutine();
+                  }
+                },
                 child: const Text('Add'),
               ),
             ],
@@ -149,4 +153,14 @@ class _CreateRoutinePageState extends State<CreateRoutinePage> {
       ),
     );
   }
+
+  Future<void> _addCategory(String cat) async {
+    final x = Category()..name = cat;
+    isar.writeTxn(() async => await isar.categorys.put(x));
+    setState(() {
+      categories.add(cat);
+    });
+  }
+
+  void _addRoutine() {}
 }
